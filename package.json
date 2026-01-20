@@ -1,7 +1,7 @@
 {
   "name": "file-uploader",
   "version": "1.0.0",
-  "description": "",
+  "description": "A stripped down version of a personal storage service",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
