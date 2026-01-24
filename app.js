@@ -34,3 +34,22 @@ app.use(
     }),
   }),
 );
+app.use(flash());
+app.use(passport.session());
+app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.locals.errorMessage = req.flash("error");
+  next();
+});
+app.use("/", router);
+
+passport.use(localStrategy);
+passport.serializeUser(serializeSession);
+passport.deserializeUser(deserializeSession);
+
+app.listen(PORT, (error) => {
+  if (error) {
+    throw error;
+  }
+  console.log(`App listening on port ${PORT}`);
+});
