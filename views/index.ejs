@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Members Only</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <% if (user) { %> 
+    <h1>You're logged in</h1>
+    <% } else { %>
+    <main class="login">
+      <h2>Log in</h2>
+      <form action="/log-in" method="POST">
+        <div>
+          <label for="username">Email</label>
+          <input id="username" name="username" type="email" />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" />
+        </div>
+        <div><button type="submit">Log In</button></div>
+      </form>
+      <small>Don't have an account? <a href="/sign-up">Sign up</a></small>
+    </main>
+    <%}%>
+    <footer>
+      <a href="" target="_blank"><small>&copy; Nzube Ifechukwu</small></a>
+    </footer>
+  </body>
+</html>

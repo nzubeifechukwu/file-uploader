@@ -12,7 +12,7 @@ const {
   serializeSession,
   deserializeSession,
 } = require("./authenticators/authenticators");
-const { prisma } = require("./lib/prisma");
+const prisma = require("./lib/prisma");
 
 const app = express();
 const PORT = 10000; // Render uses port 10000
