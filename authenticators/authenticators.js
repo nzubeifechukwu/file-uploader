@@ -14,7 +14,7 @@ const localStrategy = new LocalStrategy(async (username, password, done) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return done(null, false, {
-        message: "Incorrect password and/or password",
+        message: "Incorrect email and/or password",
       });
     }
     return done(null, user);

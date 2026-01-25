@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Members Only</title>
+    <title>File Uploader</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -13,13 +13,14 @@
     <main class="login">
       <h2>Log in</h2>
       <form action="/log-in" method="POST">
+        <%- include('partials/userAuthenticationError') %>
         <div>
           <label for="username">Email</label>
-          <input id="username" name="username" type="email" />
+          <input id="username" name="username" type="email" required />
         </div>
         <div>
           <label for="password">Password</label>
-          <input id="password" name="password" type="password" />
+          <input id="password" name="password" type="password" required />
         </div>
         <div><button type="submit">Log In</button></div>
       </form>
@@ -27,7 +28,7 @@
     </main>
     <%}%>
     <footer>
-      <a href="" target="_blank"><small>&copy; Nzube Ifechukwu</small></a>
+      <a href="" target="https://github.com/nzubeifechukwu/file-uploader"><small>&copy; Nzube Ifechukwu</small></a>
     </footer>
   </body>
 </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up | File Uploader</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="sign-up">
+    <header>
+      <h1>File Uploader</h1>
+      <h2>Sign Up</h2>
+    </header>
+    <main>
+      <%- include('partials/inputValidationErrors') %>
+      <form action="/sign-up" method="post">
+        <div class="not-radio">
+          <label for="username">Email</label>
+          <input
+            type="email"
+            name="username"
+            id="username"
+            value="<%= locals.formData ? formData.username : '' %>"
+          />
+        </div>
+        <div class="not-radio">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" />
+        </div>
+        <div class="not-radio">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" name="confirmPassword" id="confirmPassword" />
+        </div>
+        <div><button type="submit">Sign Up</button></div>
+      </form>
+      <small>Have an account? <a href="/">Log in</a></small>
+    </main>
+    <footer>
+      <a href="" target="https://github.com/nzubeifechukwu/file-uploader"
+        ><small>&copy; Nzube Ifechukwu</small></a
+      >
+    </footer>
+  </body>
+</html>
