@@ -1,5 +1,6 @@
 const passport = require("passport");
 const { validationResult, matchedData } = require("express-validator");
+const bcrypt = require("bcryptjs");
 const prisma = require("../lib/prisma");
 const validateUser = require("../inputValidator/inputValidator");
 
@@ -28,10 +29,11 @@ const signUpPost = [
         .status(400)
         .render("sign-up", { errors: errors.array(), formData: req.body });
     }
-    const { username, password, confirmPassword } = matchedData(req);
+    const { username, password } = matchedData(req);
+    const hashedPassword = await bcrypt.hash(password, 10);
     try {
       await prisma.user.create({
-        data: { username: username, password: password },
+        data: { username: username, password: hashedPassword },
       });
       res.redirect("/");
     } catch (error) {
