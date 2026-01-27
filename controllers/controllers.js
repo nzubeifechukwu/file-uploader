@@ -52,4 +52,10 @@ function logOut(req, res, next) {
   });
 }
 
-module.exports = { home, logIn, signUpGet, signUpPost, logOut };
+function uploadFile(req, res) {
+  // how to change filename to a custom name in the uploads folder
+  console.log(req.file);
+  res.redirect("/");
+}
+
+module.exports = { home, logIn, signUpGet, signUpPost, logOut, uploadFile };

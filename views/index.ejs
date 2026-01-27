@@ -8,7 +8,12 @@
   </head>
   <body>
     <% if (user) { %> 
-    <h1>You're logged in</h1>
+    <h1>You're logged in, <%= user.username.split("@")[0] %></h1>
+    <h2>Choose a file to upload</h2>
+    <form action="/upload" method="post", enctype="multipart/form-data">
+      <input type="file" name="uploadedFile">
+      <button type="submit">Upload</button>
+    </form>
     <% } else { %>
     <main class="login">
       <h2>Log in</h2>
@@ -28,7 +33,7 @@
     </main>
     <%}%>
     <footer>
-      <a href="" target="https://github.com/nzubeifechukwu/file-uploader"><small>&copy; Nzube Ifechukwu</small></a>
+      <a href="https://github.com/nzubeifechukwu/file-uploader" target="_blank"><small>&copy; Nzube Ifechukwu</small></a>
     </footer>
   </body>
 </html>
