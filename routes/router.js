@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 const upload = multer({ storage: storage });
@@ -20,6 +20,6 @@ router.post("/log-in", controllers.logIn);
 router.get("/sign-up", controllers.signUpGet);
 router.post("/sign-up", controllers.signUpPost);
 router.get("/log-out", controllers.logOut);
-router.post("/upload", upload.single("uploadedFile"), controllers.goHome);
+router.post("/upload", upload.single("uploadedFile"), controllers.uploadFile);
 
 module.exports = router;

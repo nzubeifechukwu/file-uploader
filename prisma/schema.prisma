@@ -21,15 +21,30 @@ model Session {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
+  id       Int      @id @default(autoincrement())
+  username String   @unique
   password String
   files    File[]
+  folders  Folder[]
 }
 
 model File {
+  id       Int    @id @default(autoincrement())
+  name     String
+  owner    User   @relation(fields: [ownerId], references: [id])
+  ownerId  Int
+  folder   Folder @relation(fields: [folderId], references: [id])
+  folderId Int
+
+  @@unique([name, folderId]) // Ensures users can have same filename in different folders
+}
+
+model Folder {
   id      Int    @id @default(autoincrement())
   name    String
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId Int
+  files   File[]
+
+  @@unique([name, ownerId]) // Ensures a user cannot have two folders with the same name
 }

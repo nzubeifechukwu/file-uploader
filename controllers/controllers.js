@@ -2,11 +2,9 @@ const passport = require("passport");
 const { validationResult, matchedData } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const prisma = require("../lib/prisma");
-const multer = require("multer");
+// const multer = require("multer");
 
 const validateUser = require("../inputValidator/inputValidator");
-
-let storage;
 
 async function home(req, res) {
   res.render("index", { user: req.user });
@@ -56,8 +54,38 @@ function logOut(req, res, next) {
   });
 }
 
-function goHome(req, res) {
-  res.redirect("/");
+async function uploadFile(req, res) {
+  const { destination, filename } = req.file;
+  const userId = req.user.id;
+
+  try {
+    const folder = await prisma.folder.upsert({
+      where: {
+        name_ownerId: {
+          name: destination,
+          ownerId: userId,
+        },
+      },
+      update: {}, // If folder exists, do nothing
+      create: {
+        name: destination,
+        owner: { connect: { id: userId } },
+      },
+    });
+
+    const file = await prisma.file.create({
+      data: {
+        name: filename,
+        folder: { connect: { id: folder.id } },
+        owner: { connect: { id: userId } },
+      },
+    });
+    
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error uploading file");
+  }
 }
 
 module.exports = {
@@ -66,5 +94,5 @@ module.exports = {
   signUpGet,
   signUpPost,
   logOut,
-  goHome,
+  uploadFile,
 };
