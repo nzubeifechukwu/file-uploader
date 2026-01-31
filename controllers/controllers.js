@@ -2,7 +2,11 @@ const passport = require("passport");
 const { validationResult, matchedData } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const prisma = require("../lib/prisma");
+const multer = require("multer");
+
 const validateUser = require("../inputValidator/inputValidator");
+
+let storage;
 
 async function home(req, res) {
   res.render("index", { user: req.user });
@@ -52,10 +56,15 @@ function logOut(req, res, next) {
   });
 }
 
-function uploadFile(req, res) {
-  // how to change filename to a custom name in the uploads folder
-  console.log(req.file);
+function goHome(req, res) {
   res.redirect("/");
 }
 
-module.exports = { home, logIn, signUpGet, signUpPost, logOut, uploadFile };
+module.exports = {
+  home,
+  logIn,
+  signUpGet,
+  signUpPost,
+  logOut,
+  goHome,
+};
