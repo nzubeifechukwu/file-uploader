@@ -55,6 +55,9 @@ function logOut(req, res, next) {
 }
 
 async function uploadFile(req, res) {
+  if (!req.file) {
+    res.status(400).send("Choose a file to upload.");
+  }
   const { destination, filename } = req.file;
   const userId = req.user.id;
 
@@ -80,7 +83,7 @@ async function uploadFile(req, res) {
         owner: { connect: { id: userId } },
       },
     });
-    
+
     res.redirect("/");
   } catch (error) {
     console.error(error);

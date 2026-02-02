@@ -11,7 +11,7 @@
     <h1>You're logged in, <%= user.username.split("@")[0] %></h1>
     <h2>Choose a file to upload</h2>
     <form action="/upload" method="post", enctype="multipart/form-data">
-      <input type="file" name="uploadedFile">
+      <input type="file" name="uploadedFile" required>
       <button type="submit">Save</button>
     </form>
     <% } else { %>
