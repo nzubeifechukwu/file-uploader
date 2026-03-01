@@ -9,11 +9,61 @@
   <body>
     <% if (user) { %> 
     <h1>You're logged in, <%= user.username.split("@")[0] %></h1>
-    <h2>Choose a file to upload</h2>
-    <form action="/upload" method="post", enctype="multipart/form-data">
-      <input type="file" name="uploadedFile" required>
-      <button type="submit">Save</button>
-    </form>
+    <% if (folders.length > 0) { %>
+    <section>
+      <h2>Your Folders and Files</h2>
+      <ul>
+        <% folders.forEach(folder => { %>
+          <li>
+            <strong><%= folder.name %></strong>
+            <button type="button" onclick="document.getElementById('edit-form-<%= folder.id %>').style.display='block'">Rename</button>
+            <form action="/folders/<%= folder.id %>/delete" method="POST" style="display: inline;">
+              <button type="submit" onclick="return confirm('Delete folder and all files?')">Delete</button>
+            </form>
+            <div id="edit-form-<%= folder.id %>" style="display: none; margin-top: 5px;">
+              <form action="/folders/<%= folder.id %>/update" method="post">
+                <label for="newName">Folder Name</label>
+                <input type="text" name="newName" id="newName" value="<%= folder.name %>" required>
+                <button type="submit">Save</button>
+                <button type="button" onclick="this.parentElement.parentElement.style.display='none'">Cancel</button>
+              </form>
+            </div>
+            <ul>
+              <% folder.files.forEach(file => { %>
+                <li><%= file.name %></li>
+              <% }); %>
+            </ul>
+          </li>
+        <% }); %>
+      </ul>
+    </section>
+    <% } %>
+    <hr>
+    <section>
+      <h2>Create a Folder</h2>
+      <form action="/folders" method="post">
+        <label for="folderName">Folder Name</label>
+        <input type="text" name="folderName" placeholder="Folder Name" id="folderName" required>
+        <button type="submit">Create Folder</button>
+      </form>
+    </section>
+    <hr>
+    <section>
+      <h2>Upload a File</h2>
+      <form action="/upload" method="post", enctype="multipart/form-data">
+        <% if (folders.length > 0) { %>
+        <label for="folderId">Choose Folder:</label>
+        <select name="folderId" id="folderId" required>
+          <option value="">-- Select a Folder --</option>
+          <% folders.forEach(folder => { %>
+            <option value="<%= folder.id %>"><%= folder.name %></option>
+          <% }); %>
+        </select>
+        <% } %>
+        <input type="file" name="uploadedFile" required>
+        <button type="submit">Save</button>
+      </form>
+    </section>
     <div class="logout"><a href="/log-out">Log out</a></div>
     <% } else { %>
     <main class="login">

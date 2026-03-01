@@ -2,12 +2,18 @@ const passport = require("passport");
 const { validationResult, matchedData } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const prisma = require("../lib/prisma");
-// const multer = require("multer");
 
 const validateUser = require("../inputValidator/inputValidator");
 
 async function home(req, res) {
-  res.render("index", { user: req.user });
+  let folders = [];
+  if (req.user) {
+    folders = await prisma.folder.findMany({
+      where: { ownerId: req.user.id },
+      include: { files: true },
+    });
+  }
+  res.render("index", { user: req.user, folders: folders });
 }
 
 function logIn(req, res, next) {
@@ -54,40 +60,89 @@ function logOut(req, res, next) {
   });
 }
 
+async function createFolder(req, res) {
+  const { folderName } = req.body;
+  try {
+    await prisma.folder.create({
+      data: {
+        name: folderName,
+        ownerId: req.user.id,
+      },
+    });
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Error creating folder.");
+  }
+}
+
 async function uploadFile(req, res) {
   if (!req.file) {
-    res.status(400).send("Choose a file to upload.");
+    return res.status(400).send("No file uploaded.");
   }
-  const { destination, filename } = req.file;
-  const userId = req.user.id;
+  const { filename } = req.file;
+  const { folderId } = req.body;
 
   try {
-    const folder = await prisma.folder.upsert({
-      where: {
-        name_ownerId: {
-          name: destination,
-          ownerId: userId,
-        },
-      },
-      update: {}, // If folder exists, do nothing
-      create: {
-        name: destination,
-        owner: { connect: { id: userId } },
-      },
-    });
-
-    const file = await prisma.file.create({
+    await prisma.file.create({
       data: {
         name: filename,
-        folder: { connect: { id: folder.id } },
-        owner: { connect: { id: userId } },
+        folderId: parseInt(folderId),
+        ownerId: req.user.id,
       },
     });
-
     res.redirect("/");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error uploading file");
+    res.status(500).send("Error linking file to folder.");
+  }
+}
+
+async function deleteFolder(req, res) {
+  const { id } = req.params;
+  try {
+    await prisma.folder.delete({
+      where: { id: parseInt(id) },
+    });
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error deleting folder.");
+  }
+}
+
+async function renameFolder(req, res) {
+  const { id } = req.params;
+  const { newName } = req.body;
+  try {
+    await prisma.folder.update({
+      where: { id: parseInt(id) },
+      data: { name: newName },
+    });
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error renaming folder.");
+  }
+}
+
+async function checkFolderOwnership(req, res, next) {
+  // Find the folder ID in params first, then fall back to body
+  const folderId = req.params.id || req.body.folderId;
+  if (!folderId) {
+    return res.status(400).send("Folder ID is required.");
+  }
+  try {
+    const folder = await prisma.folder.findUnique({
+      where: { id: parseInt(folderId) },
+    });
+    // Check if folder exists and if logged-in user owns it
+    if (!folder || folder.ownerId !== req.user.id) {
+      return res.status(403).send("Access denied: You do not own this folder.");
+    }
+    next(); // If all is well, move to the next function
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error during authorization.");
   }
 }
 
@@ -97,5 +152,9 @@ module.exports = {
   signUpGet,
   signUpPost,
   logOut,
+  createFolder,
   uploadFile,
+  deleteFolder,
+  renameFolder,
+  checkFolderOwnership,
 };

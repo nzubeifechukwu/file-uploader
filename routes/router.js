@@ -20,6 +20,22 @@ router.post("/log-in", controllers.logIn);
 router.get("/sign-up", controllers.signUpGet);
 router.post("/sign-up", controllers.signUpPost);
 router.get("/log-out", controllers.logOut);
-router.post("/upload", upload.single("uploadedFile"), controllers.uploadFile);
+router.post("/folders", controllers.createFolder);
+router.post(
+  "/upload",
+  upload.single("uploadedFile"),
+  controllers.checkFolderOwnership,
+  controllers.uploadFile,
+);
+router.post(
+  "/folders/:id/delete",
+  controllers.checkFolderOwnership,
+  controllers.deleteFolder,
+);
+router.post(
+  "/folders/:id/update",
+  controllers.checkFolderOwnership,
+  controllers.renameFolder,
+);
 
 module.exports = router;
