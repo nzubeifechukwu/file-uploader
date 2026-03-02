@@ -22,15 +22,14 @@
             </form>
             <div id="edit-form-<%= folder.id %>" style="display: none; margin-top: 5px;">
               <form action="/folders/<%= folder.id %>/update" method="post">
-                <label for="newName">Folder Name</label>
-                <input type="text" name="newName" id="newName" value="<%= folder.name %>" required>
+                <input type="text" name="newName" value="<%= folder.name %>" required>
                 <button type="submit">Save</button>
                 <button type="button" onclick="this.parentElement.parentElement.style.display='none'">Cancel</button>
               </form>
             </div>
             <ul>
               <% folder.files.forEach(file => { %>
-                <li><%= file.name %></li>
+                <li><%= file.name %> <a href="/<%= folder.id %>/<%= file.name %>">Show Details</a></li>
               <% }); %>
             </ul>
           </li>
@@ -42,8 +41,7 @@
     <section>
       <h2>Create a Folder</h2>
       <form action="/folders" method="post">
-        <label for="folderName">Folder Name</label>
-        <input type="text" name="folderName" placeholder="Folder Name" id="folderName" required>
+        <input type="text" name="folderName" placeholder="Folder Name" required>
         <button type="submit">Create Folder</button>
       </form>
     </section>

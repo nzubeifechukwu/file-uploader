@@ -37,5 +37,6 @@ router.post(
   controllers.checkFolderOwnership,
   controllers.renameFolder,
 );
+router.get("/:folderId/:fileName", controllers.showFileDetails);
 
 module.exports = router;

@@ -16,6 +16,23 @@ async function home(req, res) {
   res.render("index", { user: req.user, folders: folders });
 }
 
+async function showFileDetails(req, res) {
+  const { folderId, fileName } = req.params;
+  let file;
+
+  if (req.user) {
+    file = await prisma.file.findFirst({
+      where: {
+        ownerId: req.user.id,
+        folderId: parseInt(folderId),
+        name: fileName,
+      },
+    });
+  }
+
+  res.render("fileDetails", { user: req.user, file: file });
+}
+
 function logIn(req, res, next) {
   passport.authenticate("local", {
     successRedirect: "/",
@@ -148,6 +165,7 @@ async function checkFolderOwnership(req, res, next) {
 
 module.exports = {
   home,
+  showFileDetails,
   logIn,
   signUpGet,
   signUpPost,
