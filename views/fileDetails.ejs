@@ -6,7 +6,14 @@
     <title><%= file.name %> | File Uploader</title>
   </head>
   <body>
-    <h1><%= file.name %></h1>
+    <nav><a href="/">Go Home</a></nav>
+    <main>
+      <h1>Hello, <%= user.username.split("@")[0] %></h1>
+      <p>
+        Your file <strong><%= file.name %></strong> is of size
+        <strong><%= file.size %> bytes</strong>
+      </p>
+    </main>
     <footer>
       <a href="https://github.com/nzubeifechukwu/file-uploader" target="_blank"
         ><small>&copy; Nzube Ifechukwu</small></a

@@ -96,13 +96,14 @@ async function uploadFile(req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  const { filename } = req.file;
+  const { filename, size } = req.file;
   const { folderId } = req.body;
 
   try {
     await prisma.file.create({
       data: {
         name: filename,
+        size: size,
         folderId: parseInt(folderId),
         ownerId: req.user.id,
       },
