@@ -11,7 +11,8 @@
       <h1>Hello, <%= user.username.split("@")[0] %></h1>
       <p>
         Your file <strong><%= file.name %></strong> is of size
-        <strong><%= file.size %> bytes</strong>
+        <strong><%= file.size %> bytes</strong>.
+        <a href="/files/download/<%= file.id %>">Download File</a>
       </p>
     </main>
     <footer>

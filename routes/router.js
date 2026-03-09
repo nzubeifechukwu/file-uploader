@@ -38,5 +38,6 @@ router.post(
   controllers.renameFolder,
 );
 router.get("/:folderId/:fileName", controllers.showFileDetails);
+router.get("/files/download/:id", controllers.downloadFile);
 
 module.exports = router;

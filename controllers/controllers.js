@@ -1,3 +1,5 @@
+const path = require("node:path");
+const fs = require("node:fs");
 const passport = require("passport");
 const { validationResult, matchedData } = require("express-validator");
 const bcrypt = require("bcryptjs");
@@ -164,6 +166,38 @@ async function checkFolderOwnership(req, res, next) {
   }
 }
 
+async function downloadFile(req, res) {
+  const id = parseInt(req.params.id);
+
+  try {
+    const file = await prisma.file.findUnique({
+      where: { id: id },
+    });
+
+    if (!file) {
+      return res.status(404).send("File not found in database.");
+    }
+
+    if (file.ownerId !== req.user.id) {
+      return res
+        .status(403)
+        .send("You do not have permission to download this file.");
+    }
+
+    const filePath = path.join(__dirname, "../uploads/", file.name);
+
+    // Check if file actually exists on the disk
+    if (fs.existsSync(filePath)) {
+      return res.download(filePath, file.name); // Sends the file and forces a download
+    } else {
+      return res.status(404).send("File missing from server storage");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred during download.");
+  }
+}
+
 module.exports = {
   home,
   showFileDetails,
@@ -176,4 +210,5 @@ module.exports = {
   deleteFolder,
   renameFolder,
   checkFolderOwnership,
+  downloadFile,
 };
