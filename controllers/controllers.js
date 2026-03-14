@@ -4,6 +4,7 @@ const passport = require("passport");
 const { validationResult, matchedData } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const prisma = require("../lib/prisma");
+const supabase = require("../lib/supabase");
 
 const validateUser = require("../inputValidator/inputValidator");
 

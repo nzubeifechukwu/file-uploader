@@ -29,7 +29,10 @@
             </div>
             <ul>
               <% folder.files.forEach(file => { %>
-                <li><%= file.name %> <a href="/<%= folder.id %>/<%= file.name %>">Show Details</a></li>
+                <li><%= file.name %> 
+                  <a href="/<%= folder.id %>/<%= file.name %>">Show File Details</a> 
+                  <a href="/files/download/<%= file.id %>">Download File</a>
+                </li>
               <% }); %>
             </ul>
           </li>
