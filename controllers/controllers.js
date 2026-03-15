@@ -1,5 +1,3 @@
-const path = require("node:path");
-const fs = require("node:fs");
 const passport = require("passport");
 const { validationResult, matchedData } = require("express-validator");
 const bcrypt = require("bcryptjs");
@@ -99,22 +97,37 @@ async function uploadFile(req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  const { filename, size } = req.file;
+
+  const { originalname, size, mimetype, buffer } = req.file;
   const { folderId } = req.body;
 
   try {
+    const fileTimestamp = Date.now();
+    const storagePath = `user_${req.user.id}/${fileTimestamp}_${originalname}`;
+
+    // Upload to Supabase: `uploads` is the bucket name created on Supabase
+    const { data, error } = await supabase.storage
+      .from("uploads")
+      .upload(storagePath, buffer, { contentType: mimetype, upsert: false });
+
+    if (error) throw error;
+
+    // Save file details to Prisma
     await prisma.file.create({
       data: {
-        name: filename,
+        name: originalname,
         size: size,
+        mimetype: mimetype,
+        storagePath: storagePath,
         folderId: parseInt(folderId),
         ownerId: req.user.id,
       },
     });
+
     res.redirect("/");
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error linking file to folder.");
+    console.error("Upload Error:", error);
+    res.status(500).send("Error uploading file to cloud.");
   }
 }
 
@@ -180,24 +193,25 @@ async function downloadFile(req, res) {
     }
 
     if (file.ownerId !== req.user.id) {
-      return res
-        .status(403)
-        .send("You do not have permission to download this file.");
+      return res.status(403).send("Unauthorized access.");
     }
 
-    const filePath = path.join(__dirname, "../uploads/", file.name);
+    // Generate a 60-second temporary URL: `download: true` forces browser to download rather than play/view
+    const { data, error } = await supabase.storage
+      .from("uploads")
+      .createSignedUrl(file.storagePath, 60, { download: true });
 
-    // Check if file actually exists on the disk
-    if (fs.existsSync(filePath)) {
-      return res.download(filePath, file.name); // Sends the file and forces a download
-    } else {
-      return res.status(404).send("File missing from server storage");
-    }
+    if (error) throw error;
+
+    // Redirect user's browser to the temporary cloud link
+    res.redirect(data.signedUrl);
   } catch (error) {
-    console.error(error);
+    console.error("Download Error:", error);
     res.status(500).send("An error occurred during download.");
   }
 }
+
+async function deleteFile(req, res) {}
 
 module.exports = {
   home,
@@ -212,4 +226,5 @@ module.exports = {
   renameFolder,
   checkFolderOwnership,
   downloadFile,
+  deleteFile,
 };
