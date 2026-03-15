@@ -120,7 +120,7 @@ async function uploadFile(req, res) {
         mimetype: mimetype,
         storagePath: storagePath,
         folderId: parseInt(folderId),
-        ownerId: req.user.id,
+        ownerId: parseInt(req.user.id),
       },
     });
 
@@ -163,7 +163,9 @@ async function checkFolderOwnership(req, res, next) {
   // Find the folder ID in params first, then fall back to body
   const folderId = req.params.id || req.body.folderId;
   if (!folderId) {
-    return res.status(400).send("Folder ID is required.");
+    return res
+      .status(400)
+      .send("Folder ID is required. You must create or choose a folder.");
   }
   try {
     const folder = await prisma.folder.findUnique({
@@ -211,7 +213,12 @@ async function downloadFile(req, res) {
   }
 }
 
-async function deleteFile(req, res) {}
+async function deleteFile(req, res) {
+  const { id } = req.params;
+
+  try {
+  } catch (error) {}
+}
 
 module.exports = {
   home,
