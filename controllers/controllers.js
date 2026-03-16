@@ -5,6 +5,7 @@ const prisma = require("../lib/prisma");
 const supabase = require("../lib/supabase");
 
 const validateUser = require("../inputValidator/inputValidator");
+const { formatBytes, formatDate } = require("../utils");
 
 async function home(req, res) {
   let folders = [];
@@ -14,7 +15,12 @@ async function home(req, res) {
       include: { files: true },
     });
   }
-  res.render("index", { user: req.user, folders: folders });
+  res.render("index", {
+    user: req.user,
+    folders: folders,
+    formatBytes,
+    formatDate,
+  });
 }
 
 async function showFileDetails(req, res) {
@@ -110,7 +116,9 @@ async function uploadFile(req, res) {
       .from("uploads")
       .upload(storagePath, buffer, { contentType: mimetype, upsert: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Save file details to Prisma
     await prisma.file.create({
@@ -133,13 +141,33 @@ async function uploadFile(req, res) {
 
 async function deleteFolder(req, res) {
   const { id } = req.params;
+  const folderId = parseInt(id);
+
   try {
-    await prisma.folder.delete({
-      where: { id: parseInt(id) },
+    const filesInFolder = await prisma.file.findMany({
+      where: { folderId: folderId },
     });
+
+    // Get all files in folder and delete them from Supabase
+    if (filesInFolder.length > 0) {
+      const pathsToDelete = filesInFolder.map((file) => file.storagePath);
+      const { error: storageError } = await supabase.storage
+        .from("uploads")
+        .remove(pathsToDelete);
+
+      if (storageError) {
+        throw storageError;
+      }
+    }
+
+    // Now delete folder in database
+    await prisma.folder.delete({
+      where: { id: folderId },
+    });
+
     res.redirect("/");
   } catch (error) {
-    console.error(error);
+    console.error("Delete Folder Error:", error);
     res.status(500).send("Error deleting folder.");
   }
 }
@@ -203,7 +231,9 @@ async function downloadFile(req, res) {
       .from("uploads")
       .createSignedUrl(file.storagePath, 60, { download: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Redirect user's browser to the temporary cloud link
     res.redirect(data.signedUrl);
@@ -217,7 +247,33 @@ async function deleteFile(req, res) {
   const { id } = req.params;
 
   try {
-  } catch (error) {}
+    const file = await prisma.file.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!file) {
+      return res.status(404).send("File not found.");
+    }
+
+    if (file.ownerId !== req.user.id) {
+      return res.status(403).send("Unauthorized access.");
+    }
+
+    const { error: storageError } = await supabase.storage
+      .from("uploads")
+      .remove([file.storagePath]); // .remove() expects an array of paths
+
+    if (storageError) {
+      throw storageError;
+    }
+
+    await prisma.file.delete({ where: { id: parseInt(id) } });
+
+    res.redirect("/");
+  } catch (error) {
+    console.error("Delete File Error:", error);
+    res.status(500).send("Error deleting file.");
+  }
 }
 
 module.exports = {

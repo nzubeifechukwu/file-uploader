@@ -12,8 +12,17 @@
       <p>
         Your file <strong><%= file.name %></strong> is of size
         <strong><%= file.size %> bytes</strong>.
-        <a href="/files/download/<%= file.id %>">Download File</a>
       </p>
+      <a href="/files/<%= file.id %>/download">Download File</a>
+      <form
+        action="/files/<%= file.id %>/delete"
+        method="POST"
+        style="display: inline"
+      >
+        <button type="submit" onclick="return confirm('Delete file?');">
+          Delete File
+        </button>
+      </form>
     </main>
     <footer>
       <a href="https://github.com/nzubeifechukwu/file-uploader" target="_blank"

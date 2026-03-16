@@ -12,10 +12,10 @@
     <% if (folders.length > 0) { %>
     <section>
       <h2>Your Folders and Files</h2>
-      <ul>
+      <section>
         <% folders.forEach(folder => { %>
-          <li>
-            <strong><%= folder.name %></strong>
+          <article>
+            <h3><%= folder.name %></h3>
             <button type="button" onclick="document.getElementById('edit-form-<%= folder.id %>').style.display='block'">Rename</button>
             <form action="/folders/<%= folder.id %>/delete" method="POST" style="display: inline;">
               <button type="submit" onclick="return confirm('Delete folder and all files?')">Delete</button>
@@ -27,14 +27,33 @@
                 <button type="button" onclick="this.parentElement.parentElement.style.display='none'">Cancel</button>
               </form>
             </div>
-            <ul>
-              <% folder.files.forEach(file => { %>
-                <li><%= file.name %> 
-                  <a href="/<%= folder.id %>/<%= file.name %>">Show File Details</a> 
-                  <a href="/files/download/<%= file.id %>">Download File</a>
-                </li>
-              <% }); %>
-            </ul>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Size</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% folder.files.forEach(file => { %>
+                  <tr>
+                    <td>
+                      <a href="/<%= folder.id %>/<%= file.name %>"><%= file.name %></a> 
+                    </td>
+                    <td><%= formatBytes(file.size) %></td>
+                    <td><%= formatDate(file.createdAt) %></td>
+                    <td>    
+                      <form action="/files/<%= file.id %>/delete" method="POST">
+                        <button type="submit" onclick="return confirm('Delete file?')">Delete</button>
+                      </form>
+                      <a href="/files/<%= file.id %>/download">Download</a>
+                    </td>
+                  </tr>
+                <% }); %>  
+              </tbody>
+            </table>
           </li>
         <% }); %>
       </ul>

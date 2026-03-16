@@ -33,12 +33,13 @@ router.post(
   controllers.checkFolderOwnership,
   controllers.deleteFolder,
 );
+router.post("/files/:id/delete", controllers.deleteFile);
 router.post(
   "/folders/:id/update",
   controllers.checkFolderOwnership,
   controllers.renameFolder,
 );
 router.get("/:folderId/:fileName", controllers.showFileDetails);
-router.get("/files/download/:id", controllers.downloadFile);
+router.get("/files/:id/download", controllers.downloadFile);
 
 module.exports = router;
