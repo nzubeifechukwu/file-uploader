@@ -40,11 +40,23 @@ app.use((req, res, next) => {
   res.locals.errorMessage = req.flash("error");
   next();
 });
-app.use("/", router);
 
 passport.use(localStrategy);
 passport.serializeUser(serializeSession);
 passport.deserializeUser(deserializeSession);
+
+app.use("/", router);
+
+// Error handler: always after routes
+app.use((err, req, res, next) => {
+  if (err.code === "LIMIT_FILE_SIZE") {
+    req.flash("error", "File is too large. Maximum size allowed is 5MB.");
+    return res.redirect("back"); // Redirects user back to the page they were on
+  }
+  // handle other potential errors
+  console.error(err.stack);
+  res.status(500).send("Internal Server Error.");
+});
 
 app.listen(PORT, (error) => {
   if (error) {

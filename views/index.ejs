@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <% if (errorMessage && errorMessage.length > 0) { %>
+    <div class="alert alert-danger">
+      <%= errorMessage %>
+    </div>
+    <% } %>
     <% if (user) { %> 
     <h1>You're logged in, <%= user.username.split("@")[0] %></h1>
     <% if (folders.length > 0) { %>
@@ -39,9 +44,7 @@
               <tbody>
                 <% folder.files.forEach(file => { %>
                   <tr>
-                    <td>
-                      <a href="/<%= folder.id %>/<%= file.name %>"><%= file.name %></a> 
-                    </td>
+                    <td><%= file.name %></td>
                     <td><%= formatBytes(file.size) %></td>
                     <td><%= formatDate(file.createdAt) %></td>
                     <td>    

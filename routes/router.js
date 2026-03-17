@@ -6,15 +6,10 @@ const controllers = require("../controllers/controllers");
 const router = Router();
 
 const storage = multer.memoryStorage();
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + "-" + file.originalname);
-//   },
-// });
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 
 router.get("/", controllers.home);
 router.post("/log-in", controllers.logIn);
@@ -39,7 +34,6 @@ router.post(
   controllers.checkFolderOwnership,
   controllers.renameFolder,
 );
-router.get("/:folderId/:fileName", controllers.showFileDetails);
 router.get("/files/:id/download", controllers.downloadFile);
 
 module.exports = router;

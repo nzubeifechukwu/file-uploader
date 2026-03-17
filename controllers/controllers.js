@@ -23,23 +23,6 @@ async function home(req, res) {
   });
 }
 
-async function showFileDetails(req, res) {
-  const { folderId, fileName } = req.params;
-  let file;
-
-  if (req.user) {
-    file = await prisma.file.findFirst({
-      where: {
-        ownerId: req.user.id,
-        folderId: parseInt(folderId),
-        name: fileName,
-      },
-    });
-  }
-
-  res.render("fileDetails", { user: req.user, file: file });
-}
-
 function logIn(req, res, next) {
   passport.authenticate("local", {
     successRedirect: "/",
@@ -95,7 +78,7 @@ async function createFolder(req, res) {
     });
     res.redirect("/");
   } catch (error) {
-    res.status(500).send("Error creating folder.");
+    next(error); // Sends error to error handler in app.js
   }
 }
 
@@ -134,8 +117,7 @@ async function uploadFile(req, res) {
 
     res.redirect("/");
   } catch (error) {
-    console.error("Upload Error:", error);
-    res.status(500).send("Error uploading file to cloud.");
+    next(error); // Sends error to error handler in app.js
   }
 }
 
@@ -278,7 +260,6 @@ async function deleteFile(req, res) {
 
 module.exports = {
   home,
-  showFileDetails,
   logIn,
   signUpGet,
   signUpPost,
