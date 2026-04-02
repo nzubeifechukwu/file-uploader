@@ -1,0 +1,48 @@
+html {
+  box-sizing: border-box;
+  font-family:
+    system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+main.login,
+main.sign-up {
+  text-align: center;
+  margin: 30px;
+}
+
+main.login h1,
+main.sign-up h1 {
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+main.login h2,
+main.sign-up h2 {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+main.login input,
+main.sign-up input {
+  margin: 5px 10px;
+  padding: 1.5px;
+}
+
+main.login button,
+main.sign-up button {
+  padding: 5px;
+  margin: 10px;
+}
+
+footer {
+  text-align: center;
+}

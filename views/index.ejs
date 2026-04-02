@@ -13,14 +13,16 @@
     </div>
     <% } %>
     <% if (user) { %> 
-    <h1>You're logged in, <%= user.username.split("@")[0] %></h1>
+    <main class="logged-in">
+    <h1>File Uploader</h1>
+    <h2>You're logged in, <%= user.username.split("@")[0] %></h2>
     <% if (folders.length > 0) { %>
     <section>
-      <h2>Your Folders and Files</h2>
+      <h3>Your Folders and Files</h3>
       <section>
         <% folders.forEach(folder => { %>
           <article>
-            <h3><%= folder.name %></h3>
+            <h4><%= folder.name.toUpperCase() %></h4>
             <button type="button" onclick="document.getElementById('edit-form-<%= folder.id %>').style.display='block'">Rename</button>
             <form action="/folders/<%= folder.id %>/delete" method="POST" style="display: inline;">
               <button type="submit" onclick="return confirm('Delete folder and all files?')">Delete</button>
@@ -64,7 +66,7 @@
     <% } %>
     <hr>
     <section>
-      <h2>Create a Folder</h2>
+      <h3>Create a Folder</h3>
       <form action="/folders" method="post">
         <input type="text" name="folderName" placeholder="Folder Name" required>
         <button type="submit">Create Folder</button>
@@ -72,7 +74,7 @@
     </section>
     <hr>
     <section>
-      <h2>Upload a File</h2>
+      <h3>Upload a File</h3>
       <form action="/upload" method="post", enctype="multipart/form-data">
         <% if (folders.length > 0) { %>
         <label for="folderId">Choose Folder:</label>
@@ -88,8 +90,10 @@
       </form>
     </section>
     <div class="logout"><a href="/log-out">Log out</a></div>
+    </main>
     <% } else { %>
     <main class="login">
+      <h1>File Uploader</h1>
       <h2>Log in</h2>
       <form action="/log-in" method="POST">
         <%- include('partials/userAuthenticationError') %>
