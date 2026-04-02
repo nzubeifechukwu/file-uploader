@@ -14,13 +14,14 @@ html {
 }
 
 main.login,
-main.sign-up {
+main.sign-up,
+main.logged-in {
   text-align: center;
   margin: 30px;
 }
 
 main.login h1,
-main.sign-up h1 {
+main.sign-up h1, main.logged-in h1 {
   font-weight: 600;
   margin-bottom: 20px;
 }
@@ -31,14 +32,28 @@ main.sign-up h2 {
   margin-bottom: 5px;
 }
 
+main.logged-in h2 {
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+main.logged-in h3 {
+  font-weight: 600;
+  margin: 10px;
+}
+
+main.logged-in p, main.logged-in li {
+  margin-bottom: 10px;
+}
+
 main.login input,
-main.sign-up input {
+main.sign-up input, main.logged-in input {
   margin: 5px 10px;
   padding: 1.5px;
 }
 
 main.login button,
-main.sign-up button {
+main.sign-up button, main.logged-in button {
   padding: 5px;
   margin: 10px;
 }

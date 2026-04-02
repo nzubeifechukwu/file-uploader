@@ -22,7 +22,7 @@
       <section>
         <% folders.forEach(folder => { %>
           <article>
-            <h4><%= folder.name.toUpperCase() %></h4>
+            <p><strong><%= folder.name.toUpperCase() %></strong> contains:</p>
             <button type="button" onclick="document.getElementById('edit-form-<%= folder.id %>').style.display='block'">Rename</button>
             <form action="/folders/<%= folder.id %>/delete" method="POST" style="display: inline;">
               <button type="submit" onclick="return confirm('Delete folder and all files?')">Delete</button>
@@ -34,34 +34,20 @@
                 <button type="button" onclick="this.parentElement.parentElement.style.display='none'">Cancel</button>
               </form>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Size</th>
-                  <th>Created</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
+            <ul>
                 <% folder.files.forEach(file => { %>
-                  <tr>
-                    <td><%= file.name %></td>
-                    <td><%= formatBytes(file.size) %></td>
-                    <td><%= formatDate(file.createdAt) %></td>
-                    <td>    
-                      <form action="/files/<%= file.id %>/delete" method="POST">
+                    <li>
+                      <strong><%= file.name %></strong>, of size <strong><%= formatBytes(file.size) %></strong>, created on <strong><%= formatDate(file.createdAt) %></strong>    
+                      <form action="/files/<%= file.id %>/delete" method="POST" style="display: inline">
                         <button type="submit" onclick="return confirm('Delete file?')">Delete</button>
                       </form>
                       <a href="/files/<%= file.id %>/download">Download</a>
-                    </td>
-                  </tr>
-                <% }); %>  
-              </tbody>
-            </table>
-          </li>
+                    </li>
+                <% }); %>
+            </ul>
+          </article>
         <% }); %>
-      </ul>
+      </section>
     </section>
     <% } %>
     <hr>
